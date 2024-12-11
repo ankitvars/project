@@ -30,8 +30,8 @@ const ProductsListPage: React.FC = () => {
       });
 
       if (!res.ok) throw new Error('Failed to fetch products');
-      const data: Product[] = await res.json();
-      setProducts(data);
+      const response: Product[] = await res.json();
+      setProducts(response.data);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

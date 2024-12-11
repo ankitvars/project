@@ -5,7 +5,8 @@ const productSchema = new Schema(
     name: String,
     description: String,
     status: { type: String, enum: ["Available", "Sold"], default: "Available" },
-    sellerId: { type: Schema.Types.ObjectId, ref: "User" },
+    sellerId: { type: Schema.Types.ObjectId, ref: "Seller" },
+    added_by: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true },
 );
