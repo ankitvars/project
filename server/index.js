@@ -1,8 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
-const apiRoutes = require("./routes");
+const connectDB = require("./src/config/db");
+const apiRoutes = require("./src/routes");
+const PORT = process.env.PORT;
 
 const app = express();
 
@@ -15,6 +16,11 @@ connectDB();
 // Routes
 app.use("/api", apiRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+app.listen(PORT, (err) => {
+  if (err) {
+    console.error(`Port ${PORT} is in use. Please try a different port.`);
+    process.exit(1);
+  } else {
+    console.log(`Server running on port ${PORT}`);
+  }
 });
