@@ -1,50 +1,64 @@
-// src/pages/RegisterPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // State for form fields
   const [name, setName] = useState('');
-  const [nameError, setNameError] = useState<string | null>(null);
-
   const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState<string | null>(null);
-
   const [password, setPassword] = useState('');
+
+  // State for error messages
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
+  // Generic error state
   const [error, setError] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
-    // Reset field errors
+    // Reset all errors
     setNameError(null);
     setEmailError(null);
     setPasswordError(null);
+    setError(null);
 
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
     let hasError = false;
+
+    // Validate Name
     if (!trimmedName) {
       setNameError('Name is required.');
       hasError = true;
     }
+
+    // Validate Email
     if (!trimmedEmail) {
       setEmailError('Email is required.');
       hasError = true;
+    } else if (!/^\S+@\S+\.\S+$/.test(trimmedEmail)) {
+      setEmailError('Please enter a valid email.');
+      hasError = true;
     }
+
+    // Validate Password
     if (!trimmedPassword) {
       setPasswordError('Password is required.');
+      hasError = true;
+    } else if (trimmedPassword.length < 6) {
+      setPasswordError('Password must be at least 6 characters.');
       hasError = true;
     }
 
     if (hasError) {
-      toast.error('Please fill in all required fields.');
+      toast.error('Please fix the errors in the form.');
       return;
     }
 
@@ -65,10 +79,11 @@ const RegisterPage: React.FC = () => {
       }
 
       const data = await res.json();
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('role', data.role);
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('role', data.data.role);
+
       toast.success('Registration successful!');
-      navigate(`/seller/${data.userId}`);
+      navigate(`/seller/${data.data.userId}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -149,9 +164,11 @@ const RegisterPage: React.FC = () => {
             Register
           </button>
         </form>
+
         {error && (
           <p className="text-red-600 mt-4 text-center">{`Error: ${error}`}</p>
         )}
+
         <p className="text-sm text-gray-500 text-center mt-4">
           Already have an account?{' '}
           <a href="/login" className="text-blue-600 hover:underline">

@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const productSchema = new Schema(
   {
+    _id: { type: String },
     name: String,
     description: String,
     status: { type: String, enum: ["Available", "Sold"], default: "Available" },

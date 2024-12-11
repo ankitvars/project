@@ -1,4 +1,3 @@
-// src/pages/ProductPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -9,10 +8,12 @@ interface Product {
   name: string;
   description: string;
   status: string;
+  imageUrl?: string; // Optional field for product image URL
 }
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  console.log(id);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,7 @@ const ProductPage: React.FC = () => {
     setError(null);
 
     try {
-      const res = await fetch(`/api/products/${id}`, {
+      const res = await fetch(`/api/product/${id}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token ? `Bearer ${token}` : '',
@@ -45,8 +46,8 @@ const ProductPage: React.FC = () => {
         }
       }
 
-      const data: Product = await res.json();
-      setProduct(data);
+      const response = await res.json();
+      setProduct(response.data); // Access the `data` field from the API response
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -63,12 +64,6 @@ const ProductPage: React.FC = () => {
   // Fetch product on mount and set up polling
   useEffect(() => {
     fetchProduct();
-
-    const interval = setInterval(() => {
-      fetchProduct();
-    }, 5000); // Poll every 5 seconds
-
-    return () => clearInterval(interval);
   }, [fetchProduct]);
 
   // Callback to handle successful status update
@@ -106,13 +101,20 @@ const ProductPage: React.FC = () => {
     <div className="min-h-screen bg-gray-100 p-8 flex items-center justify-center">
       <div className="w-full h-screen">
         <h1 className="text-3xl font-bold mb-6">{product.name}</h1>
+        {product.imageUrl && (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="mb-6 w-full max-w-md object-cover rounded-lg shadow"
+          />
+        )}
         <p className="text-gray-700 mb-6">{product.description}</p>
         <div className="flex items-center justify-between mb-6">
           <div>
             <span className="font-semibold text-gray-700">Status:</span>{' '}
             <span
               className={`px-2 py-1 rounded ${
-                product.status === 'Available'
+                product.status === 'available'
                   ? 'bg-green-100 text-green-800'
                   : 'bg-red-100 text-red-800'
               }`}
@@ -127,8 +129,6 @@ const ProductPage: React.FC = () => {
             Update Status
           </button>
         </div>
-
-        {/* Additional Product Details (if any) can go here */}
 
         {/* Update Status Modal */}
         <UpdateStatusModal

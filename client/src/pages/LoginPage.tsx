@@ -1,4 +1,3 @@
-// src/pages/LoginPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -18,38 +17,43 @@ const LoginPage: React.FC = () => {
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
-    let hasError = false;
     if (!trimmedEmail) {
       setEmailError('Email is required.');
-      hasError = true;
       return;
     }
     if (!trimmedPassword) {
       setPasswordError('Password is required.');
-      hasError = true;
       return;
     }
 
-    if (hasError) {
-      toast.error('Please fill in both email and password.');
-      return;
-    }
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          password: trimmedPassword,
+        }),
+      });
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: trimmedEmail, password: trimmedPassword }),
-    });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Login Failed');
+      }
 
-    if (res.ok) {
       const data = await res.json();
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('role', data.role);
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('role', data.data.role);
+
       toast.success('Login successful!');
       navigate('/');
-    } else {
-      const data = await res.json();
-      toast.error(data.error || 'Login Failed');
+      window.location.reload();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unknown error occurred.');
+      }
     }
   };
 

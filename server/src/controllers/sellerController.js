@@ -1,4 +1,5 @@
 const Seller = require("../models/Seller");
+const mongoose = require("mongoose");
 
 exports.updateSeller = async (req, res) => {
   try {
@@ -53,9 +54,21 @@ exports.getSellerList = async (req, res) => {
 
 exports.getSellerDetails = async (req, res) => {
   try {
-    const { sellerId } = req.params;
-    const seller = await Seller.findById(sellerId).populate("products");
+    const { id } = req.params; // Up
 
+    // Validate id format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid seller ID format",
+        data: null,
+        error: null,
+      });
+    }
+
+    const seller = await Seller.findById(id);
+    console.log(id);
+    console.log(seller);
     if (!seller) {
       return res.status(404).json({
         status: 404,
