@@ -23,9 +23,10 @@ Create a `.env` file in the `server` folder with the following variables:
 
 ```
 # Server Configuration
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/your-database-name
-JWT_SECRET=your-jwt-secret
+MONGODB_URI="mongodb+srv://ankitvars2001:VghxQwgZTxssfIlU@cluster0.m4vbh.mongodb.net/"
+JWT_SECRET="bb823f2e55f36d39409591d8f32c5efaaf7a8fae1f17a9d3cafd2bc9bbbfbb63"
+PORT=7001
+
 ```
 
 ---
@@ -35,8 +36,8 @@ JWT_SECRET=your-jwt-secret
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/ankitvars/project.git
+cd project
 ```
 
 ---
@@ -85,27 +86,7 @@ npm install
 npm run dev
 ```
 
-- The client will run at `http://localhost:3000` (default Vite port).
-
----
-
-### Directory Structure
-
-```
-project-root/
-├── client/            # React app
-│   ├── src/           # Frontend source code
-│   ├── public/        # Static assets
-│   ├── package.json   # Client dependencies
-├── server/            # Express server
-│   ├── models/        # Mongoose models
-│   ├── controllers/   # Controller logic
-│   ├── routes/        # Express routes
-│   ├── middleware/    # Authentication and other middleware
-│   ├── package.json   # Server dependencies
-├── .gitignore         # Git ignored files
-├── README.md          # Project documentation
-```
+- The client will run at `http://localhost:5173` (default Vite port).
 
 ---
 
